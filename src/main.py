@@ -1,6 +1,5 @@
 import random
 import pygame
-from pygame.locals import *
 
 if not pygame.font: print('Warning, fonts disabled')
 
@@ -8,8 +7,14 @@ colors = {'black': (0, 0, 0),
           'white': (255, 255, 255),
           'red': (255, 0, 0),
           'green': (0, 255, 0),
-          'blue': (0, 0, 255)}
-color_names = ('black', 'white', 'red', 'green', 'blue')
+          'blue': (0, 0, 255),
+          'brownish': (169, 111, 53),
+          'yellowish': (159, 135, 12),
+          'pinkish': (255, 104, 175),
+          'mint': (0, 191, 135),
+          'purple': (89, 31, 97),
+          'snot': (158, 234, 83)}
+color_names = ('black', 'white', 'red', 'green', 'blue', 'brownish', 'yellowish', 'pinkish', 'mint', 'purple', 'snot')
 
 screen_width = 720
 screen_height = 480
@@ -73,13 +78,14 @@ def hitEdge(smileBox2, smileBox):
 		corner = True
 	else:
 		smileBox2.x = smileBox.x
-		
+	
 	return smileBox2, corner
 
 
 def main():
 	screen = initialize()
 	active = True
+	win = False
 	clockObject = pygame.time.Clock()
 	move = 5
 	collisions = 0
@@ -93,61 +99,72 @@ def main():
 	
 	enemiesXY = []
 	
-	for i in range(50):
+	for i in range(60):
 		x = random.randint(0, screen_width)
 		y = random.randint(0, screen_height)
-		color = color_names[random.randint(1, len(color_names) - 1)]
+		color = colors[color_names[random.randint(1, len(colors) - 1)]]
 		enemiesXY.append((x, y, color))
 	
-	starXY = (random.randint(0, screen_width), random.randint(0, screen_height))
+	starXY = (random.randint(20, screen_width - 20), random.randint(20, screen_height - 20))
 	
 	while active:
 		clockObject.tick(60)
 		screen.fill(colors['black'])
-		screen.blit(star, starXY)
-		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				print('# of Collisions:', totalHits)
 				active = False
-		
-		smileBox = movement(smileBox, move)
-		smileBox2, corner = hitEdge(smileBox2, smileBox)
-		
-		for i in enemiesXY:
-			pygame.draw.circle(screen, i[2], (i[0], i[1]), 3)
-			if smileBox.collidepoint(i[0], i[1]) or smileBox2.collidepoint(i[0], i[1]):
-				collisions += 1
-		
-		if smileBox.collidepoint(starXY) or smileBox2.collidepoint(starXY):
-			if pygame.font:
-				font = pygame.font.Font(None, 36)
-				text = font.render("Congrats!", True, colors['white'], (0, 0, 0))
-				textpos = text.get_rect(centerx=screen.get_width() / 2)
-				screen.blit(text, textpos)
-		
-		if frame < 30:
-			if collisions > 1:
-				frame += 1
+		if not win:
+			screen.blit(star, starXY)
+			
+			smileBox = movement(smileBox, move)
+			smileBox2, corner = hitEdge(smileBox2, smileBox)
+			
+			for i in enemiesXY:
+				pygame.draw.circle(screen, i[2], (i[0], i[1]), 3)
+				if smileBox.collidepoint(i[0], i[1]) or smileBox2.collidepoint(i[0], i[1]):
+					collisions += 1
+			
+			if smileBox.collidepoint(starXY) or smileBox2.collidepoint(starXY):
 				if pygame.font:
-					font = pygame.font.Font(None, 36)
-					text = font.render("You Got Hit!", True, colors['white'], (0, 0, 0))
-					textpos = text.get_rect(centerx=screen.get_width() / 2)
+					font = pygame.font.Font('coolvetica rg.ttf', 50)
+					font.set_bold(True)
+					text = font.render("Congrats!", True, colors['white'], (0, 0, 0))
+					textpos = text.get_rect(centerx=screen.get_width() / 2, centery=screen.get_height() / 2)
 					screen.blit(text, textpos)
-		else:
-			collisions = 0
-			frame = 0
-			totalHits += 1
-		
-		if corner:
-			screen.blit(smile, smileBox2)
-		
-		if smileBox.right < 0 or smileBox.left > screen_width or \
-				smileBox.bottom < 0 or smileBox.top > screen_height:
-			smileBox = smileBox2
-		
-		screen.blit(smile, smileBox)
-		pygame.display.flip()
+					win = True
+			
+			if frame < 30:
+				if collisions > 1:
+					frame += 1
+					if pygame.font:
+						font = pygame.font.Font('coolvetica rg.ttf', 36)
+						text = font.render("You Got Hit!", True, colors['white'], (0, 0, 0))
+						textpos = text.get_rect(centerx=screen.get_width() / 2)
+						screen.blit(text, textpos)
+			else:
+				collisions = 0
+				frame = 0
+				totalHits += 1
+			
+			if corner:
+				screen.blit(smile, smileBox2)
+			
+			if smileBox.right < 0 or smileBox.left > screen_width or \
+					smileBox.bottom < 0 or smileBox.top > screen_height:
+				smileBox = smileBox2
+			
+			screen.blit(smile, smileBox)
+			pygame.display.flip()
+		if win:
+			if pygame.font:
+				font = pygame.font.Font('coolvetica rg.ttf', 36)
+				font.set_bold(True)
+				text = font.render("Congrats on winning the game!", True, colors['white'], (0, 0, 0))
+				textpos = text.get_rect(centerx=screen.get_width() / 2, centery=screen.get_height() / 2)
+				screen.blit(text, textpos)
+			
+			pygame.display.flip()
 
 
 if __name__ == '__main__':

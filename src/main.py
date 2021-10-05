@@ -29,28 +29,16 @@ def initialize():
 
 
 def movement(smileBox, move: int):
-	if pygame.key.get_pressed()[pygame.K_a] and pygame.key.get_pressed()[pygame.K_w]:
-		smileBox = smileBox.move(-move, -move)
-	
-	elif pygame.key.get_pressed()[pygame.K_a] and pygame.key.get_pressed()[pygame.K_s]:
-		smileBox = smileBox.move(-move, move)
-	
-	elif pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_w]:
-		smileBox = smileBox.move(move, -move)
-	
-	elif pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_s]:
-		smileBox = smileBox.move(move, move)
-	
-	elif pygame.key.get_pressed()[pygame.K_a]:
+	if pygame.key.get_pressed()[pygame.K_a]:
 		smileBox = smileBox.move(-move, 0)
-	
-	elif pygame.key.get_pressed()[pygame.K_w]:
+
+	if pygame.key.get_pressed()[pygame.K_w]:
 		smileBox = smileBox.move(0, -move)
 	
-	elif pygame.key.get_pressed()[pygame.K_s]:
+	if pygame.key.get_pressed()[pygame.K_s]:
 		smileBox = smileBox.move(0, move)
 	
-	elif pygame.key.get_pressed()[pygame.K_d]:
+	if pygame.key.get_pressed()[pygame.K_d]:
 		smileBox = smileBox.move(move, 0)
 	
 	return smileBox

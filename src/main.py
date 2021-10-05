@@ -84,14 +84,9 @@ def hitEdge(smileBox2, smileBox):
 
 def main():
 	screen = initialize()
-	active = True
-	win = False
-	cont = True
+	active, win, start, inStar, inStarPrev = True, False, False, False, False
 	clockObject = pygame.time.Clock()
-	move = 5
-	collisions = 0
-	frame = 0
-	totalHits = 0
+	collisions, frame, totalHits, move = 0, 0, 0, 5
 	
 	smile = pygame.image.load('smile_40x40.png').convert_alpha()
 	star = pygame.image.load('star_15x16.png').convert_alpha()
@@ -100,31 +95,34 @@ def main():
 	
 	enemiesXY = []
 	
-	for i in range(120):
+	for i in range(250):
 		x = random.randint(0, screen_width)
 		y = random.randint(0, screen_height)
 		color = colors[color_names[random.randint(1, len(colors) - 1)]]
-		enemiesXY.append((x, y, color))
+		enemiesXY.append([x, y, color])
 	
-	while cont:
+	while not start:
 		for i in enemiesXY:
 			if smileBox.collidepoint(i[:2]):
 				smileBox = smileBox.move(0, 10)
-				cont = True
+				start = False
 				break
 			else:
-				cont = False
+				start = True
 	
 	starXY = (random.randint(20, screen_width - 20), random.randint(20, screen_height - 20))
 	
 	while active:
 		clockObject.tick(60)
 		screen.fill(colors['black'])
+		
+		inStarPrev = inStar
+		inStar = False
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				print('# of Collisions:', totalHits)
 				active = False
+				
 		if not win:
 			screen.blit(star, starXY)
 			
@@ -135,15 +133,17 @@ def main():
 				pygame.draw.circle(screen, i[2], i[:2], 3)
 				if smileBox.collidepoint(i[:2]) or smileBox2.collidepoint(i[:2]):
 					collisions += 1
+					inStar = True
+			
+			if not inStar and inStarPrev:
+				totalHits += 1
+				
+				for i in range(len(enemiesXY)):
+					for j in range(2):
+						enemiesXY[i][j] += random.randint(-5, 5)
 			
 			if smileBox.collidepoint(starXY) or smileBox2.collidepoint(starXY):
-				if pygame.font:
-					font = pygame.font.Font('coolvetica rg.ttf', 50)
-					font.set_bold(True)
-					text = font.render("Congrats!", True, colors['white'], (0, 0, 0))
-					textpos = text.get_rect(centerx=screen.get_width() / 2, centery=screen.get_height() / 2)
-					screen.blit(text, textpos)
-					win = True
+				win = True
 			
 			if frame < 30:
 				if collisions > 1:
@@ -156,7 +156,6 @@ def main():
 			else:
 				collisions = 0
 				frame = 0
-				totalHits += 1
 			
 			if corner:
 				screen.blit(smile, smileBox2)
@@ -170,9 +169,9 @@ def main():
 		if win:
 			if pygame.font:
 				font = pygame.font.Font('coolvetica rg.ttf', 36)
-				font.set_bold(True)
+				font.set_underline(True)
 				text = font.render("Congrats on winning the game!", True, colors['white'], (0, 0, 0))
-				font.set_bold(False)
+				font.set_underline(False)
 				text2 = font.render("# of Collisions: " + str(totalHits), True, colors['white'], (0, 0, 0))
 				textpos = text.get_rect(centerx=screen.get_width() / 2, centery=screen.get_height() / 2)
 				textpos2 = text.get_rect(centerx=screen.get_width() / 2, centery=(screen.get_height() / 2) + 50)

@@ -86,6 +86,7 @@ def main():
 	screen = initialize()
 	active = True
 	win = False
+	cont = True
 	clockObject = pygame.time.Clock()
 	move = 5
 	collisions = 0
@@ -94,22 +95,32 @@ def main():
 	
 	smile = pygame.image.load('smile_40x40.png').convert_alpha()
 	star = pygame.image.load('star_15x16.png').convert_alpha()
-	smileBox = smile.get_rect()
+	smileBox = smile.get_rect(centerx=screen.get_width() / 2, centery=screen.get_height() / 2)
 	smileBox2 = smile.get_rect()
 	
 	enemiesXY = []
 	
-	for i in range(100):
+	for i in range(120):
 		x = random.randint(0, screen_width)
 		y = random.randint(0, screen_height)
 		color = colors[color_names[random.randint(1, len(colors) - 1)]]
 		enemiesXY.append((x, y, color))
+	
+	while cont:
+		for i in enemiesXY:
+			if smileBox.collidepoint(i[:2]):
+				smileBox = smileBox.move(0, 10)
+				cont = True
+				break
+			else:
+				cont = False
 	
 	starXY = (random.randint(20, screen_width - 20), random.randint(20, screen_height - 20))
 	
 	while active:
 		clockObject.tick(60)
 		screen.fill(colors['black'])
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				print('# of Collisions:', totalHits)
@@ -121,8 +132,8 @@ def main():
 			smileBox2, corner = hitEdge(smileBox2, smileBox)
 			
 			for i in enemiesXY:
-				pygame.draw.circle(screen, i[2], (i[0], i[1]), 3)
-				if smileBox.collidepoint(i[0], i[1]) or smileBox2.collidepoint(i[0], i[1]):
+				pygame.draw.circle(screen, i[2], i[:2], 3)
+				if smileBox.collidepoint(i[:2]) or smileBox2.collidepoint(i[:2]):
 					collisions += 1
 			
 			if smileBox.collidepoint(starXY) or smileBox2.collidepoint(starXY):

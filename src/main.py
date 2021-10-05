@@ -82,27 +82,29 @@ def main():
 	active = True
 	clockObject = pygame.time.Clock()
 	move = 5
+	collisions = 0
+	frame = 0
+	totalHits = 0
 	
 	smile = pygame.image.load('smile_40x40.png').convert_alpha()
-	# smileBad = pygame.image.load('smile_20x20.png').convert_alpha()
+	star = pygame.image.load('star_15x16.png').convert_alpha()
 	smileBox = smile.get_rect()
 	smileBox2 = smile.get_rect()
 	
 	enemiesXY = []
 	
-	for i in range(40):
+	for i in range(50):
 		x = random.randint(0, screen_width)
 		y = random.randint(0, screen_height)
 		color = color_names[random.randint(1, len(color_names) - 1)]
 		enemiesXY.append((x, y, color))
 	
-	collisions = 0
-	frame = 0
-	totalHits = 0
+	starXY = (random.randint(0, screen_width), random.randint(0, screen_height))
 	
 	while active:
 		clockObject.tick(60)
 		screen.fill(colors['black'])
+		screen.blit(star, starXY)
 		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -116,6 +118,13 @@ def main():
 			pygame.draw.circle(screen, i[2], (i[0], i[1]), 3)
 			if smileBox.collidepoint(i[0], i[1]) or smileBox2.collidepoint(i[0], i[1]):
 				collisions += 1
+		
+		if smileBox.collidepoint(starXY) or smileBox2.collidepoint(starXY):
+			if pygame.font:
+				font = pygame.font.Font(None, 36)
+				text = font.render("Congrats!", True, colors['white'], (0, 0, 0))
+				textpos = text.get_rect(centerx=screen.get_width() / 2)
+				screen.blit(text, textpos)
 		
 		if frame < 30:
 			if collisions > 1:

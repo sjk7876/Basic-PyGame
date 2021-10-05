@@ -16,8 +16,8 @@ colors = {'black': (0, 0, 0),
           'snot': (158, 234, 83)}
 color_names = ('black', 'white', 'red', 'green', 'blue', 'brownish', 'yellowish', 'pinkish', 'mint', 'purple', 'snot')
 
-screen_width = 720
-screen_height = 480
+screen_width = 1280
+screen_height = 720
 screen_size = (screen_width, screen_height)
 speed = [1, 1]
 
@@ -99,7 +99,7 @@ def main():
 	
 	enemiesXY = []
 	
-	for i in range(60):
+	for i in range(100):
 		x = random.randint(0, screen_width)
 		y = random.randint(0, screen_height)
 		color = colors[color_names[random.randint(1, len(colors) - 1)]]
@@ -161,8 +161,12 @@ def main():
 				font = pygame.font.Font('coolvetica rg.ttf', 36)
 				font.set_bold(True)
 				text = font.render("Congrats on winning the game!", True, colors['white'], (0, 0, 0))
+				font.set_bold(False)
+				text2 = font.render("# of Collisions: " + str(totalHits), True, colors['white'], (0, 0, 0))
 				textpos = text.get_rect(centerx=screen.get_width() / 2, centery=screen.get_height() / 2)
+				textpos2 = text.get_rect(centerx=screen.get_width() / 2, centery=(screen.get_height() / 2) + 50)
 				screen.blit(text, textpos)
+				screen.blit(text2, textpos2)
 			
 			pygame.display.flip()
 
